@@ -142,16 +142,6 @@
             yesBtn.style.fontSize = yesFontSize + 'rem';
             yesBtn.style.padding = `${12 * paddingMultiplier}px ${25 * paddingMultiplier}px`;
             
-            // ถ้าปุ่ม Yes ใหญ่จนบังจอ ให้มันอยู่เลเยอร์บนสุด
-            if (yesFontSize > 5) {
-                yesBtn.style.position = 'fixed';
-                yesBtn.style.top = '50%';
-                yesBtn.style.left = '50%';
-                yesBtn.style.transform = 'translate(-50%, -50%)';
-                yesBtn.style.width = '100vw';
-                yesBtn.style.height = '100vh';
-                yesBtn.style.borderRadius = '0';
-            }
         }
 
         // รองรับทั้ง Mouse (คอม) และ Touch (มือถือ)
