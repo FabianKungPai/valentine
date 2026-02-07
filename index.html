@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            background-color: #ffc0cb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* กันปุ่มหนีออกนอกจอแล้วเกิด scrollbar */
+            text-align: center;
+            touch-action: manipulation; /* ช่วยให้ touch บนมือถือลื่นขึ้น */
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 85%; /* ให้กว้างพอดีกับจอมือถือ */
+            max-width: 400px;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+        }
+
+        .gif-container img {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap; /* ให้ปุ่มเรียงใหม่ได้ถ้าปุ่ม Yes ใหญ่เกินไป */
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #yes-btn {
+            background-color: #ff4d6d;
+            color: white;
+            z-index: 2;
+        }
+
+        #no-btn {
+            background-color: #6c757d;
+            color: white;
+            position: relative;
+        }
+
+        /* หน้าจอสำเร็จ */
+        #success-screen {
+            display: none;
+        }
+
+        #success-screen h1 {
+            font-size: 2.5rem;
+            color: #ff0054;
+        }
+
+        /* ปรับแต่งสำหรับหน้าจอเล็กมากๆ */
+        @media (max-width: 375px) {
+            h1 { font-size: 1.5rem; }
+            button { padding: 10px 20px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-screen" class="container">
+        <h1>Will you be my valentine?</h1>
+        <div class="gif-container">
+            <img src="https://media1.tenor.com/m/HSxxt1scQXYAAAAC/cat-hugs.gif" alt="Cute Cat">
+        </div>
+        <div class="buttons">
+            <button id="yes-btn">Yes</button>
+            <button id="no-btn">No</button>
+        </div>
+    </div>
+
+    <div id="success-screen" class="container">
+        <h1>Yayyy I love you! ❤️</h1>
+        <div class="gif-container">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIwdGZqZnd4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/MDJ9IbxxvDUQM/giphy.gif" alt="Happy Cat">
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const mainScreen = document.getElementById('main-screen');
+        const successScreen = document.getElementById('success-screen');
+
+        let yesFontSize = 1.1; 
+        let paddingMultiplier = 1;
+
+        // ฟังก์ชันขยับหนี
+        function moveButton(e) {
+            // ป้องกันการคลิกหรือ touch ปกติ
+            if (e) e.preventDefault();
+
+            // คำนวณขอบเขตที่ปุ่มจะไปได้ (ให้อยู่ในจอ)
+            const padding = 20;
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+            
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            // เพิ่มขนาดปุ่ม Yes
+            yesFontSize += 0.4;
+            paddingMultiplier += 0.2;
+            yesBtn.style.fontSize = yesFontSize + 'rem';
+            yesBtn.style.padding = `${12 * paddingMultiplier}px ${25 * paddingMultiplier}px`;
+            
+            // ถ้าปุ่ม Yes ใหญ่จนบังจอ ให้มันอยู่เลเยอร์บนสุด
+            if (yesFontSize > 5) {
+                yesBtn.style.position = 'fixed';
+                yesBtn.style.top = '50%';
+                yesBtn.style.left = '50%';
+                yesBtn.style.transform = 'translate(-50%, -50%)';
+                yesBtn.style.width = '100vw';
+                yesBtn.style.height = '100vh';
+                yesBtn.style.borderRadius = '0';
+            }
+        }
+
+        // รองรับทั้ง Mouse (คอม) และ Touch (มือถือ)
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', moveButton);
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        // เมื่อกด Yes
+        yesBtn.addEventListener('click', () => {
+            mainScreen.style.display = 'none';
+            successScreen.style.display = 'block';
+            noBtn.style.display = 'none'; // ซ่อนปุ่ม No ทิ้งไปเลย
+        });
+    </script>
+</body>
+</html>
